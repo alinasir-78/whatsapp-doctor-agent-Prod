@@ -1,0 +1,23 @@
+[Unit]
+Description=Apex Care WhatsApp Doctor Scheduling Agent & Clinical Portal
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/var/www/whatsapp-doctor-agent
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=whatsapp-doctor-agent
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Security sandboxing
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
