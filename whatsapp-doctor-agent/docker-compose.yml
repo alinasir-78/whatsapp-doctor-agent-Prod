@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  doctor-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp-doctor-agent
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data/doctor_agent.db
+      # Optional: Add Meta WhatsApp Cloud API credentials
+      # - WHATSAPP_PHONE_NUMBER_ID=your_phone_id
+      # - WHATSAPP_ACCESS_TOKEN=your_access_token
+      # - WHATSAPP_VERIFY_TOKEN=apex_clinic_secure_webhook_token_2026
+      # Optional: Nebius Token Factory / NVIDIA Open-Source Model API
+      # - NEBIUS_API_KEY=your_key
+      # - NEBIUS_BASE_URL=https://api.tokenfactory.nebius.com/v1
+      # - NEBIUS_MODEL=nvidia/Llama-3.1-Nemotron-70B-Instruct
+    volumes:
+      # Persistent SQLite storage volume
+      - clinic_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  clinic_data:
+    driver: local
